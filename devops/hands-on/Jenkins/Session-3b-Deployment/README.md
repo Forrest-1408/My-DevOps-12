@@ -25,21 +25,19 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 1 - Building Web Application
 
-- Fork the `https://github.com/JBCodeWorld/java-tomcat-sample.git` repo.
-
 - Select `New Item`
 
 - Enter name as `build-web-application`
 
 - Select `Free Style Project`
 
-- For Description : `This Job is packaging Java-Tomcat-Sample Project and creates a war file.`
+- For Description : `This job packages the java-tomcat-sample-main app and creates a war file.`
 
 - At `General Tab`, select Discard old builds, `Strategy` is `Log Rotation`, and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `3`.
 
 - From `Source Code Management` part select `Git`
 
-- Enter `https://github.com/<github-user-name>/java-tomcat-sample.git` for `Repository URL`.
+- Enter `https://github.com/clarusway-aws-devops/java-tomcat-sample-main` for `Repository URL`.
 
 - It is public repo, no need for `Credentials`.
 
@@ -47,7 +45,7 @@ At the end of the this hands-on training, students will be able to;
 
 - For `Build`, select `Invoke top-level Maven targets`
 
-  - For `Maven Version`, select the pre-defined maven, `maven-3.8.6` 
+  - For `Maven Version`, select the pre-defined maven, `maven-3.8.7` 
   - For `Goals`, write `clean package`
   - POM: `pom.xml`
 
@@ -69,7 +67,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Select `Free Style Project`
 
-- For Description : `This Job will deploy a Java-Tomcat-Sample to the staging environment.`
+- For Description : `This job deploys the java-tomcat-sample-main app to the staging environment.`
 
 - At `General Tab`, select Discard old builds, `Strategy` is `Log Rotation`, and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `3`.
 
@@ -107,7 +105,7 @@ At the end of the this hands-on training, students will be able to;
 -  Go to the `build-web-application`
    -  Select `Configure`
    -  Select the `Post-build Actions` tab
-   -  From `Add post-build action`, `Build othe projects`
+   -  From `Add post-build action`, `Build other projects`
       -  For `Projects to build`, fill in `Deploy-Application-Staging-Environment`
       -  And select `Trigger only if build is stable` option.
    - Go to the `Build Triggers` tab
@@ -118,7 +116,6 @@ At the end of the this hands-on training, students will be able to;
    - `Save` the modified job.
 
    - At `Project build-web-application`  page, you will see `Downstream Projects` : `Deploy-Application-Staging-Environment`
-
 
 - Update the web site content, and commit to the GitHub.
 
@@ -138,7 +135,7 @@ At the end of the this hands-on training, students will be able to;
 
 - Select `Free Style Project`
 
-- For Description : `This Job will deploy a Java-Tomcat-Sample to the deployment environment.`
+- For Description : `This job deploys the java-tomcat-sample-main app to the production environment.`
 
 - At `General Tab`, select `Strategy` and for `Days to keep builds` enter `5` and `Max # of builds to keep` enter `3`.
 
@@ -153,7 +150,7 @@ At the end of the this hands-on training, students will be able to;
 
 - For `Add post-build action`, select `Deploy war/ear to a container`
   - for `WAR/EAR files`, fill in `**/*.war`.
-  - for `Context path`, filll in `/`.
+  - for `Context path`, fill in `/`.
   - for `Containers`, select `Tomcat 9.x Remote`.
   - From `Credentials`, select `tomcat/*****`.
   - for `Tomcat URL`, select `private ip` of production tomcat server like `http://172.31.28.5:8080`.
@@ -164,11 +161,16 @@ At the end of the this hands-on training, students will be able to;
 
 ## Part 5 - Automate Existing Maven Project as Pipeline with Jenkins
 
+-  Go to the `build-web-application`
+   -  Select `Configure`
+   -  Go to the `Post-build Actions` tab
+   -  Remove `Build othe projects` part from `Post-build Actions` section.
+
 - Go to the Jenkins dashboard and click on `New Item` to create a pipeline.
 
 - Enter `build-web-application-code-pipeline` then select `Pipeline` and click `OK`.
 
-- Enter `This code pipeline Job is to package the maven project` in the description field.
+- Enter `This pipeline job packages the java-tomcat-sample-main app and deploys to both staging and production environment` in the description field.
 
 - At `General Tab`, select `Discard old build`,
   -  select `Strategy` and 
@@ -179,66 +181,8 @@ At the end of the this hands-on training, students will be able to;
 
   - for definition, select `Pipeline script from SCM`
   - for SCM, select `Git`
-    - for `Repository URL`, select `https://github.com/<github-user-name>-tomcat-sample.git`, show the `Jenkinsfile` here.
+    - for `Repository URL`, select `https://github.com/clarusway-aws-devops/java-tomcat-sample-main`, show the `Jenkinsfile` here.
     - for `Branch Specifier`, enter `*/main` as the GitHub branch is like that.
     - approve that the `Script Path` is `Jenkinsfile`
+    
 - `Save` and `Build Now` and observe the behavior.
-
-- Copy the existing 2 jobs ( `Deploy-Application-Staging-Environment` , `Deploy-Application-Production-Environment` ) and modify them for pipeline.
-
-- Go to dashbord click on `New Item` to copy `Deploy-Application-Staging-Environment`
-
-- For name, enter `deploy-application-staging-environment-pipeline`
-
-- At the bottom, `Copy from`, enter `Deploy-Application-Staging-Environment`
-
-- Click `OK`, and `Save`
-
-- Go to dashbord click on `New Item` to copy `Deploy-Application-Production-Environment`
-
-- For name, enter `deploy-application-production-environment-pipeline`
-
-- At the bottom, `Copy from`, enter `Deploy-Application-Production-Environment`
-
-- Click `OK`, and `Save`
-
-
-- Go to the `deploy-application-staging-environment-pipeline` job
-
-- Find the `Build` section,
-  - for `Project name`, enter `build-web-application-code-pipeline` 
-  - select `Latest successful build`
-
-- `Save` the job
-
-- Go to the `deploy-application-production-environment-pipeline` job
-
-- Find the `Build` section,
-  - for `Project name`, enter `build-web-application-code-pipeline` 
-  - select `Latest successful build`
-
-- `Save` the job
-
-- Now, go to the `build-web-application-code-pipeline` job and update the `Jenkinsfile` to include last 2 stages. For this purpose, add these 2 stages in `Jenkinsfile` like below:
-
-```text
-        stage('Deploy to Staging Environment'){
-            steps{
-                build job: 'deploy-application-staging-environment-pipeline'
-
-            }
-            
-        }
-        stage('Deploy to Production Environment'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-                build job: 'deploy-application-production-environment-pipeline'
-            }
-        }
-```
-
-- Note: You can also use updated `Jenkinsfile2` file instead of updating `Jenkinsfile`.
-
-- Go to the `build-web-application-code-pipeline` then select `Build Now` and observe the behaviors.

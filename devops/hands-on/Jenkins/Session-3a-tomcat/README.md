@@ -117,7 +117,8 @@ cd /opt/tomcat/conf
 ```bash
   <role rolename="manager-script"/>
   <role rolename="admin-gui"/>
-  <user username="tomcat" password="tomcat" roles="manager-script,admin-gui"/>
+  <role rolename="manager-gui"/>
+  <user username="tomcat" password="tomcat" roles="manager-script, admin-gui, manager-gui"/>
 ```
 
 - Note : Don't forget to remove the xml comment bloks `<!--` and `-->`. Delete these enclosing lines.

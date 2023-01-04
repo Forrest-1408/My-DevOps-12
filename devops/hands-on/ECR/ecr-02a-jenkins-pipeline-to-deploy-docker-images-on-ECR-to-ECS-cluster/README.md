@@ -217,11 +217,6 @@ git add .
 git commit -m 'added Jenkinsfile'
 git push
 ```
-- Explain, why we got `Error: Cannot perform an interactive login from a non TTY deviceAdd` error and add the following line into ```environment``` section in the Jenkins file.
-
-```text
-PATH="/usr/local/bin/:${env.PATH}"
-```
 
 ### Step-3: Make change to trigger Jenkins
 
@@ -278,7 +273,6 @@ Press "i" to edit
     environment {
         ECR_REGISTRY = "<aws_account_id>.dkr.ecr.us-east-1.amazonaws.com"
         APP_REPO_NAME= "clarusway/to-do-app"
-        PATH="/usr/local/bin/:${env.PATH}"
     }
     stages {
         stage('Build Docker Image') {
@@ -354,7 +348,7 @@ aws ecs create-cluster --cluster-name to-do-app
 }
 ```
 
-Note: If you don't have ecsTaskExecutionRole, you can create as below.
+Note: If you don't have ecsTaskExecutionRole, go to IAM service and create as below.
 
 ```bash
 Use case : Elastic Container Service >>> Elastic Container Service task
@@ -380,7 +374,7 @@ aws ecs list-task-definitions
 aws ecs create-service --cluster to-do-app --service-name to-do-app-service --task-definition to-do-app --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[subnet-077c9758],securityGroups=[sg-e29b36ce],assignPublicIp=ENABLED}" # change the subnets and security group and make sure that the 3000 port is open. 
 ```
 
-> Note: securityGroups=[sg-e29b36ce] is default sg. If we don't specify any sg, aws assign default sg to the cluster.
+> Note: securityGroups=[sg-e29b36ce] is default sg. If we don't specify any sg, aws assign default sg to the cluster. Port #3000 should be allowed on the sg.
 
 - Change a `Jenkinsfile` within the `todo-app-node-project` repo and add Deploy stage like below.
 
