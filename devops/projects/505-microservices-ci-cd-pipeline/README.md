@@ -123,7 +123,7 @@ git push origin main
   + Create `release` base branch.
 
     ```bash
-    git checkout main
+    git checkout dev
     git branch release
     git checkout release
     git push --set-upstream origin release
