@@ -3665,7 +3665,7 @@ Target group        : `call-rancher-http-80-tg` target group
 * Install RKE, the Rancher Kubernetes Engine, [Kubernetes distribution and command-line tool](https://rancher.com/docs/rke/latest/en/installation/)) on Jenkins Server.
 
 ```bash
-curl -SsL "https://github.com/rancher/rke/releases/download/v1.3.12/rke_linux-amd64" -o "rke_linux-amd64"
+curl -SsL "https://github.com/rancher/rke/releases/download/v1.4.2/rke_linux-amd64" -o "rke_linux-amd64"
 sudo mv rke_linux-amd64 /usr/local/bin/rke
 chmod +x /usr/local/bin/rke
 rke --version
@@ -3711,8 +3711,8 @@ rke up --config ./rancher-cluster.yml
 
 ```bash
 mkdir -p ~/.kube
-mv ./rancher-cluster.rkestate $HOME/.kube/config
 mv ./kube_config_rancher-cluster.yml $HOME/.kube/config
+mv ./rancher-cluster.rkestate $HOME/.kube/rancher-cluster.rkestate
 chmod 400 ~/.kube/config
 kubectl get nodes
 kubectl get pods --all-namespaces
